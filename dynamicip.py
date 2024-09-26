@@ -15,6 +15,17 @@ SMTP_PORT = 587  # SMTP port (usually 587 for TLS)
 EMAIL_USER = 'your_email@example.com'  # SMTP login
 EMAIL_PASS = 'your_email_password'  # SMTP password
 
+# Function to check if the internet connection is working
+def is_internet_connected():
+    try:
+        # Try to connect to Google to check for internet access
+        response = requests.get('https://www.google.com', timeout=5)
+        if response.status_code == 200:
+            return True
+    except requests.ConnectionError:
+        pass
+    return False
+
 # Function to get the current public IP address
 def get_public_ip():
     try:
@@ -63,6 +74,11 @@ def send_email_notification(new_ip):
 def check_ip_change():
     print("Checking for IP changes...")
     
+    # Check if the internet connection is available
+    if not is_internet_connected():
+        print("No internet connection. Skipping IP check.")
+        return
+
     # Step 1: Get the current public IP
     current_ip = get_public_ip()
     if not current_ip:
